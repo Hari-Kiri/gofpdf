@@ -71,7 +71,7 @@ err := pdf.OutputFileAndClose("hello.pdf")
 ```
 
 See the functions in the
-[fpdf\_test.go](https://github.com/jung-kurt/gofpdf/blob/master/fpdf_test.go)
+[fpdf\_test.go](https://github.com/Hari-Kiri/gofpdf/blob/master/fpdf_test.go)
 file (shown as examples in this documentation) for more advanced PDF
 examples.
 
@@ -119,7 +119,7 @@ the tests complete.
 
 Please note that these examples run in the context of a test. In order
 run an example as a standalone application, you’ll need to examine
-[fpdf\_test.go](https://github.com/jung-kurt/gofpdf/blob/master/fpdf_test.go)
+[fpdf\_test.go](https://github.com/Hari-Kiri/gofpdf/blob/master/fpdf_test.go)
 for some helper routines, for example `exampleFilename()` and
 `summary()`.
 
@@ -190,7 +190,7 @@ Here are guidelines for making submissions. Your change should
   - be properly documented
   - be formatted with `go fmt`
   - include an example in
-    [fpdf\_test.go](https://github.com/jung-kurt/gofpdf/blob/master/fpdf_test.go)
+    [fpdf\_test.go](https://github.com/Hari-Kiri/gofpdf/blob/master/fpdf_test.go)
     if appropriate
   - conform to the standards of [golint](https://github.com/golang/lint)
     and [go vet](https://golang.org/cmd/vet/), that is, `golint .` and
