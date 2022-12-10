@@ -32,7 +32,6 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
-	"io/ioutil"
 	"math"
 	"os"
 	"path"
@@ -92,7 +91,7 @@ func fpdfNew(orientationStr, unitStr, sizeStr, fontDirStr string, size SizeType)
 	f.importedTplIDs = make(map[string]int, 0)
 	f.images = make(map[string]*ImageInfoType)
 	f.pageLinks = make([][]linkType, 0, 8)
-	f.pageLinks = append(f.pageLinks, make([]linkType, 0, 0)) // pageLinks[0] is unused (1-based)
+	f.pageLinks = append(f.pageLinks, make([]linkType, 0)) // pageLinks[0] is unused (1-based)
 	f.links = make([]intLinkType, 0, 8)
 	f.links = append(f.links, intLinkType{}) // links[0] is unused (1-based)
 	f.pageAttachments = make([][]annotationAttach, 0, 8)
@@ -690,7 +689,6 @@ func (f *Fpdf) Close() {
 	f.endpage()
 	// Close document
 	f.enddoc()
-	return
 }
 
 // PageSize returns the width and height of the specified page in the units
@@ -818,7 +816,6 @@ func (f *Fpdf) AddPageFormat(orientationStr string, size SizeType) {
 	}
 	f.color.text = tc
 	f.colorFlag = cf
-	return
 }
 
 // AddPage adds a new page to the document. If a page is already present, the
@@ -841,7 +838,6 @@ func (f *Fpdf) AddPage() {
 	}
 	// dbg("AddPage")
 	f.AddPageFormat(f.defOrientation, f.defPageSize)
-	return
 }
 
 // PageNo returns the current page number.
@@ -960,8 +956,7 @@ func (f *Fpdf) GetStringSymbolWidth(s string) int {
 	}
 	w := 0
 	if f.isCurrentUTF8 {
-		unicode := []rune(s)
-		for _, char := range unicode {
+		for _, char := range s {
 			intChar := int(char)
 			if len(f.currentFont.Cw) >= intChar && f.currentFont.Cw[intChar] > 0 {
 				if f.currentFont.Cw[intChar] != 65535 {
@@ -1693,7 +1688,7 @@ func (f *Fpdf) addFont(familyStr, styleStr, fileStr string, isUTF8 bool) {
 		originalSize := ttfStat.Size()
 		Type := "UTF8"
 		var utf8Bytes []byte
-		utf8Bytes, err = ioutil.ReadFile(fileStr)
+		utf8Bytes, err = os.ReadFile(fileStr)
 		if err != nil {
 			f.SetError(err)
 			return
@@ -1956,8 +1951,7 @@ func (f *Fpdf) AddFontFromReader(familyStr, styleStr string, r io.Reader) {
 	if ok {
 		return
 	}
-	var info fontDefType
-	info = f.loadfont(r)
+	info := f.loadfont(r)
 	if f.err != nil {
 		return
 	}
@@ -1986,7 +1980,6 @@ func (f *Fpdf) AddFontFromReader(familyStr, styleStr string, r io.Reader) {
 		}
 	}
 	f.fonts[fontkey] = info
-	return
 }
 
 // GetFontDesc returns the font descriptor, which can be used for
@@ -2104,7 +2097,6 @@ func (f *Fpdf) SetFont(familyStr, styleStr string, size float64) {
 	if f.page > 0 {
 		f.outf("BT /F%s %.2f Tf ET", f.currentFont.i, f.fontSizePt)
 	}
-	return
 }
 
 // SetFontStyle sets the style of the current font. See also SetFont()
@@ -2213,7 +2205,7 @@ func (f *Fpdf) Text(x, y float64, txtStr string) {
 			x -= f.GetStringWidth(txtStr)
 		}
 		txt2 = f.escape(utf8toutf16(txtStr, false))
-		for _, uni := range []rune(txtStr) {
+		for _, uni := range txtStr {
 			f.currentFont.usedRunes[int(uni)] = int(uni)
 		}
 	} else {
@@ -2424,7 +2416,7 @@ func (f *Fpdf) CellFormat(w, h float64, txtStr, borderStr string, ln int,
 				txtStr = reverseText(txtStr)
 			}
 			wmax := int(math.Ceil((w - 2*f.cMargin) * 1000 / f.fontSize))
-			for _, uni := range []rune(txtStr) {
+			for _, uni := range txtStr {
 				f.currentFont.usedRunes[int(uni)] = int(uni)
 			}
 			space := f.escape(utf8toutf16(" ", false))
@@ -2449,7 +2441,7 @@ func (f *Fpdf) CellFormat(w, h float64, txtStr, borderStr string, ln int,
 					txtStr = reverseText(txtStr)
 				}
 				txt2 = f.escape(utf8toutf16(txtStr, false))
-				for _, uni := range []rune(txtStr) {
+				for _, uni := range txtStr {
 					f.currentFont.usedRunes[int(uni)] = int(uni)
 				}
 			} else {
@@ -2491,7 +2483,6 @@ func (f *Fpdf) CellFormat(w, h float64, txtStr, borderStr string, ln int,
 	} else {
 		f.x += w
 	}
-	return
 }
 
 // Revert string to use in RTL languages
@@ -2925,7 +2916,7 @@ func (f *Fpdf) WriteLinkID(h float64, displayStr string, linkID int) {
 //
 // width indicates the width of the box the text will be drawn in. This is in
 // the unit of measure specified in New(). If it is set to 0, the bounding box
-//of the page will be taken (pageWidth - leftMargin - rightMargin).
+// of the page will be taken (pageWidth - leftMargin - rightMargin).
 //
 // lineHeight indicates the line height in the unit of measure specified in
 // New().
@@ -3118,7 +3109,6 @@ func (f *Fpdf) ImageOptions(imageNameStr string, x, y, w, h float64, flow bool, 
 		return
 	}
 	f.imageOut(info, x, y, w, h, options.AllowNegativePosition, flow, link, linkStr)
-	return
 }
 
 // RegisterImageReader registers an image, reading it from Reader r, adding it
@@ -3499,13 +3489,6 @@ func (f *Fpdf) GetPageSizeStr(sizeStr string) (size SizeType) {
 	return f.getpagesizestr(sizeStr)
 }
 
-func (f *Fpdf) _getpagesize(size SizeType) SizeType {
-	if size.Wd > size.Ht {
-		size.Wd, size.Ht = size.Ht, size.Wd
-	}
-	return size
-}
-
 func (f *Fpdf) beginpage(orientationStr string, size SizeType) {
 	if f.err != nil {
 		return
@@ -3517,7 +3500,7 @@ func (f *Fpdf) beginpage(orientationStr string, size SizeType) {
 		f.pageBoxes[f.page][box] = pb
 	}
 	f.pages = append(f.pages, bytes.NewBufferString(""))
-	f.pageLinks = append(f.pageLinks, make([]linkType, 0, 0))
+	f.pageLinks = append(f.pageLinks, make([]linkType, 0))
 	f.pageAttachments = append(f.pageAttachments, []annotationAttach{})
 	f.state = 2
 	f.x = f.lMargin
@@ -3547,7 +3530,6 @@ func (f *Fpdf) beginpage(orientationStr string, size SizeType) {
 	if orientationStr != f.defOrientation || size.Wd != f.defPageSize.Wd || size.Ht != f.defPageSize.Ht {
 		f.pageSizes[f.page] = SizeType{f.wPt, f.hPt}
 	}
-	return
 }
 
 func (f *Fpdf) endpage() {
@@ -3630,14 +3612,6 @@ func (f *Fpdf) dostrikeout(x, y float64, txt string) string {
 	w := f.GetStringWidth(txt) + f.ws*float64(blankCount(txt))
 	return sprintf("%.2f %.2f %.2f %.2f re f", x*f.k,
 		(f.h-(y+4*up/1000*f.fontSize))*f.k, w*f.k, -ut/1000*f.fontSizePt)
-}
-
-func bufEqual(buf []byte, str string) bool {
-	return string(buf[0:len(str)]) == str
-}
-
-func be16(buf []byte) int {
-	return 256*int(buf[0]) + int(buf[1])
 }
 
 func (f *Fpdf) newImageInfo() *ImageInfoType {
@@ -4185,7 +4159,6 @@ func (f *Fpdf) putfonts() {
 			}
 		}
 	}
-	return
 }
 
 func (f *Fpdf) generateCIDFontMap(font *fontDefType, LastRune int) {
@@ -4330,14 +4303,14 @@ func (f *Fpdf) loadFontFile(name string) ([]byte, error) {
 	if f.fontLoader != nil {
 		reader, err := f.fontLoader.Open(name)
 		if err == nil {
-			data, err := ioutil.ReadAll(reader)
+			data, err := io.ReadAll(reader)
 			if closer, ok := reader.(io.Closer); ok {
 				closer.Close()
 			}
 			return data, err
 		}
 	}
-	return ioutil.ReadFile(path.Join(f.fontpath, name))
+	return os.ReadFile(path.Join(f.fontpath, name))
 }
 
 func (f *Fpdf) putimages() {
@@ -4611,7 +4584,6 @@ func (f *Fpdf) putresources() {
 		f.out(">>")
 		f.out("endobj")
 	}
-	return
 }
 
 // returns Now() if tm is zero
@@ -4822,7 +4794,6 @@ func (f *Fpdf) enddoc() {
 	f.outf("%d", o)
 	f.out("%%EOF")
 	f.state = 3
-	return
 }
 
 // Path Drawing
