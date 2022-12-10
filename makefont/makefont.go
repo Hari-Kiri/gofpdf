@@ -3,8 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/jung-kurt/gofpdf"
 	"os"
+
+	"github.com/Hari-Kiri/gofpdf"
 )
 
 func errPrintf(fmtStr string, args ...interface{}) {
@@ -23,23 +24,6 @@ func showHelp() {
 		"metric file with the same pathname except with the extension .afm must be\n"+
 		"present.")
 	errPrintf("\nExample: %s --embed --enc=../font/cp1252.map --dst=../font calligra.ttf /opt/font/symbol.pfb\n", os.Args[0])
-}
-
-func tutorialSummary(f *gofpdf.Fpdf, fileStr string) {
-	if f.Ok() {
-		fl, err := os.Create(fileStr)
-		defer fl.Close()
-		if err == nil {
-			f.Output(fl)
-		} else {
-			f.SetError(err)
-		}
-	}
-	if f.Ok() {
-		fmt.Printf("Successfully generated %s\n", fileStr)
-	} else {
-		errPrintf("%s\n", f.Error())
-	}
 }
 
 func main() {
