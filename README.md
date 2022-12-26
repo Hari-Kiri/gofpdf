@@ -1,10 +1,10 @@
 # GoFPDF document generator
 
 [![MIT
-licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/jung-kurt/gofpdf/master/LICENSE)
-[![GoDoc](https://img.shields.io/badge/godoc-GoFPDF-blue.svg)](https://pkg.go.dev/github.com/jung-kurt/gofpdf)
+licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/Hari-Kiri/gofpdf/master/LICENSE)
+[![GoDoc](https://img.shields.io/badge/godoc-GoFPDF-blue.svg)](https://pkg.go.dev/github.com/Hari-Kiri/gofpdf)
 
-![](https://raw.githubusercontent.com/jung-kurt/gofpdf/master/image/logo_gofpdf.jpg)
+![](https://raw.githubusercontent.com/Hari-Kiri/gofpdf/master/image/logo_gofpdf.jpg)
 
 Package gofpdf implements a PDF document generator with high level
 support for text, drawing and images.
@@ -49,13 +49,13 @@ page encodings for languages that have fewer than 256 glyphs.
 To install the package on your system, run
 
 ``` shell
-go get github.com/jung-kurt/gofpdf
+go get github.com/Hari-Kiri/gofpdf
 ```
 
 Later, to receive updates, run
 
 ``` shell
-go get -u -v github.com/jung-kurt/gofpdf/...
+go get -u -v github.com/Hari-Kiri/gofpdf/...
 ```
 
 ## Quick Start
